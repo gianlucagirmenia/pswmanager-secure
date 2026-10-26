@@ -1,0 +1,99 @@
+spring:
+  application:
+    name: pswmanager
+
+  config:
+    activate:
+      on-profile: default
+  
+  datasource:
+    url: jdbc:sqlite:passwords.db
+    driver-class-name: org.sqlite.JDBC
+    username: ''
+    password: ''
+    type: org.springframework.jdbc.datasource.SimpleDriverDataSource
+  
+  jpa:
+    database-platform: org.hibernate.community.dialect.SQLiteDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  
+  # Cache semplice (opzionale, per AuditService se usi cache)
+  cache:
+    type: simple
+    cache-names: audit-cache
+
+server:
+  address: 127.0.0.1
+  port: 6969
+  servlet:
+    session:
+      timeout: 15m
+      cookie:
+        http-only: true
+        same-site: strict
+
+hibp:
+  api:
+    url: https://api.pwnedpasswords.com/range/
+    timeout: 5000
+    retry:
+      count: 3
+
+security:
+  hibp:
+    delay-between-calls: 1500
+    max-passwords-per-minute: 10
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    operations-sorter: method
+    tags-sorter: alpha
+    try-it-out-enabled: true
+    display-request-duration: true
+    doc-expansion: none
+    default-model-expand-depth: 2
+
+# Rate Limiting Configuration
+rate:
+  limit:
+    master-password:
+      max-attempts: 5
+      window-minutes: 15
+    api:
+      max-requests: 100
+      window-minutes: 1
+
+# Audit Log Configuration
+audit:
+  log:
+    retention-days: 90
+
+# Logging Configuration
+logging:
+  level:
+    com.durdencorp.pswmanager: DEBUG
+    com.durdencorp.pswmanager.security: INFO
+    com.durdencorp.pswmanager.audit: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type: TRACE
+    org.springframework: WARN
+    org.springframework.web: INFO
+  file:
+    name: ./logs/application.log
+  log4j2:
+    config: classpath:log4j2.xml
+
+# Altri log files (definiti in log4j2.xml)
+log:
+  directory: ./logs
+  max-history: 30
+  max-file-size: 10MB
