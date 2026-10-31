@@ -16,6 +16,7 @@
 	
 	<properties>
 		<java.version>17</java.version>
+		<javafx.version>21.0.13</javafx.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	    <sqlite.version>3.41.2.2</sqlite.version>
@@ -23,6 +24,16 @@
 	</properties>
 	
 	<dependencies>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-controls</artifactId>
+			<version>${javafx.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-web</artifactId>
+			<version>${javafx.version}</version>
+		</dependency>
 		<!-- Spring Boot Starters -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -119,6 +130,26 @@
 	</dependencies>
 	
 	<profiles>
+	  <profile>
+	    <id>windows-desktop</id>
+	    <build><plugins><plugin>
+	      <groupId>org.codehaus.mojo</groupId>
+	      <artifactId>exec-maven-plugin</artifactId>
+	      <version>3.5.0</version>
+	      <executions><execution>
+	        <id>windows-application</id><phase>verify</phase><goals><goal>exec</goal></goals>
+	        <configuration>
+	          <executable>powershell.exe</executable>
+	          <arguments>
+	            <argument>-NoProfile</argument><argument>-ExecutionPolicy</argument><argument>Bypass</argument>
+	            <argument>-File</argument><argument>${project.basedir}/packaging/windows.ps1</argument>
+	            <argument>-Jar</argument><argument>${project.build.directory}/${project.build.finalName}.jar</argument>
+	            <argument>-RuntimeHome</argument><argument>${java.home}</argument>
+	          </arguments>
+	        </configuration>
+	      </execution></executions>
+	    </plugin></plugins></build>
+	  </profile>
 	  <!-- Profilo per sviluppo locale (default) -->
 	  <profile>
 	    <id>default</id>
@@ -152,6 +183,7 @@
 	            <groupId>org.springframework.boot</groupId>
 	            <artifactId>spring-boot-maven-plugin</artifactId>
 	            <configuration>
+	                <mainClass>com.durdencorp.pswmanager.desktop.DesktopLauncher</mainClass>
 	                <excludes>
 	                    <exclude>
 	                        <groupId>org.projectlombok</groupId>
@@ -171,34 +203,6 @@
 	                <encoding>UTF-8</encoding>
 	                <fork>true</fork>
 	            </configuration>
-	        </plugin>
-	        
-	        <!-- Maven Shade Plugin per risolvere dipendenze SQLite -->
-	        <plugin>
-	            <groupId>org.apache.maven.plugins</groupId>
-	            <artifactId>maven-shade-plugin</artifactId>
-	            <version>3.4.1</version>
-	            <executions>
-	                <execution>
-	                    <phase>package</phase>
-	                    <goals>
-	                        <goal>shade</goal>
-	                    </goals>
-	                    <configuration>
-	                        <createDependencyReducedPom>false</createDependencyReducedPom>
-	                        <filters>
-	                            <filter>
-	                                <artifact>*:*</artifact>
-	                                <excludes>
-	                                    <exclude>META-INF/*.SF</exclude>
-	                                    <exclude>META-INF/*.DSA</exclude>
-	                                    <exclude>META-INF/*.RSA</exclude>
-	                                </excludes>
-	                            </filter>
-	                        </filters>
-	                    </configuration>
-	                </execution>
-	            </executions>
 	        </plugin>
 	    </plugins>
 	    

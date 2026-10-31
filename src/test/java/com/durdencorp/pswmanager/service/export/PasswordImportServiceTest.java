@@ -19,7 +19,7 @@ class PasswordImportServiceTest {
         ReflectionTestUtils.setField(service, "passwordService", passwords);
         ReflectionTestUtils.setField(service, "encryption", encryption);
 
-        String json = "{\"exportDate\":\"2025-01-01T00:00:00\",\"totalEntries\":1,\"entries\":["
+        String json = "{\"exportDate\":\"2025-01-01 00:00:00\",\"entryCount\":1,\"entries\":["
                 + "{\"title\":\"Mail\",\"username\":\"user\",\"encryptedPassword\":\"entry-cipher\","
                 + "\"url\":null,\"notes\":null,\"category\":\"Email\",\"createdAt\":null,\"updatedAt\":null}]}";
         when(encryption.decrypt("backup-cipher")).thenReturn(json);

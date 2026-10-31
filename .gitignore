@@ -1,4 +1,11 @@
 HELP.md
+
+### Java: file compilati e output locali ###
+*.class
+bin/
+out/
+/build.log
+
 target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/

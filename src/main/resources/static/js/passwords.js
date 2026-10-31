@@ -33,7 +33,7 @@ async function copyPassword(button) {
 	const passwordDisplay = button.closest('tr').querySelector('.password-display');
 	try {
 		const passwordText = await loadSecret(passwordDisplay);
-		await navigator.clipboard.writeText(passwordText);
+		await copyToClipboard(passwordText);
 		const originalText = button.textContent;
 		const originalTitle = button.title;
 		const originalBackground = button.style.background;
@@ -48,9 +48,6 @@ async function copyPassword(button) {
 			button.style.background = originalBackground;
 		}, 1500);
 
-	}).catch(function(err) {
-		console.error('Errore nella copia: ', err);
-		alert('Errore nella copia della password. Controlla i permessi del browser.');
 	} catch (error) {
 		alert('Impossibile copiare la password');
 	}
@@ -297,66 +294,28 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+async function exportFile(endpoint, prefix, extension) {
+    try {
+        const filename = `${prefix}-${new Date().toISOString().split('T')[0]}.${extension}`;
+        if (await downloadExport(endpoint, filename)) {
+            alert('Esportazione salvata con successo.');
+        }
+    } catch (error) {
+        alert('Errore durante l’esportazione: ' + error.message);
+    }
+}
+
 function exportEncrypted() {
-    fetch('/api/export/encrypted')
-        .then(response => response.blob())
-        .then(blob => {
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `passwords-backup-${new Date().toISOString().split('T')[0]}.enc`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-            alert('✅ Backup cifrato esportato con successo!');
-        })
-        .catch(error => {
-            console.error('Errore export:', error);
-            alert('❌ Errore durante l\'export: ' + error.message);
-        });
+    return exportFile('/api/export/encrypted', 'passwords-backup', 'enc');
 }
 
 function exportCsv() {
-    fetch('/api/export/csv')
-        .then(response => response.blob())
-        .then(blob => {
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `passwords-metadata-${new Date().toISOString().split('T')[0]}.csv`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-            alert('✅ CSV esportato con successo!');
-        })
-        .catch(error => {
-            console.error('Errore export CSV:', error);
-            alert('❌ Errore durante l\'export CSV: ' + error.message);
-        });
+    return exportFile('/api/export/csv', 'passwords-metadata', 'csv');
 }
 
 function exportJson() {
-    fetch('/api/export/json')
-        .then(response => response.blob())
-        .then(blob => {
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `passwords-data-${new Date().toISOString().split('T')[0]}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-            alert('✅ JSON esportato con successo!');
-        })
-        .catch(error => {
-            console.error('Errore export JSON:', error);
-            alert('❌ Errore durante l\'export JSON: ' + error.message);
-        });
+    return exportFile('/api/export/json', 'passwords-data', 'json');
 }
-
 function triggerImport(type) {
     const fileInput = document.getElementById('importFile');
     if (!fileInput) {

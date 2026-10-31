@@ -1,5 +1,12 @@
 # 🔐 Password123 - Password Manager
 
+## Applicazione desktop Windows
+
+La finestra desktop e il pacchetto EXE si compilano da STS4.
+Vedere [DESKTOP.md](DESKTOP.md) per avvio, generazione EXE e importazione del database.
+La modalita desktop salva l'archivio in `%LOCALAPPDATA%\PswManager`.
+L'avvio web originale usa invece `PswmanagerApplication` da STS4.
+
 Un password manager sicuro sviluppato in Java Spring Boot con cifratura AES-256.
 
 ## 🚀 Caratteristiche Principali
@@ -112,6 +119,7 @@ cd pswmanager
 mvn clean package
 
 # Esegui
-java -jar target/pswmanager-*.jar
+java -jar target/pswmanager-0.0.1-SNAPSHOT.jar
 
-# Accedi a: http://localhost:6969
+# Si apre la finestra desktop. Per l'avvio web da STS4 usare PswmanagerApplication.
+```

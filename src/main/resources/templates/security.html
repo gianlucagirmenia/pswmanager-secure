@@ -406,7 +406,7 @@
                 const newPassword = await response.text();
                 
                 if (confirm(`Generata nuova password: ${newPassword}\n\nVuoi copiarla negli appunti e andare alla modifica?`)) {
-                    await navigator.clipboard.writeText(newPassword);
+                    await copyToClipboard(newPassword);
                     alert('✅ Password copiata negli appunti! Ora verrai reindirizzato alla pagina di modifica.');
                     window.location.href = `/edit/${id}`;
                 }
@@ -416,5 +416,6 @@
             }
         }
     </script>
+    <script th:src="@{/js/desktop-support.js}"></script>
 </body>
 </html>
